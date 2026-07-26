@@ -405,6 +405,12 @@
       <img src="images/IMG-20250809-WA0120.jpg" alt="reception, dusk" loading="lazy">
     </div>
     <div class="rule reveal">Reception with friends the next night &mdash; surrounded by everyone who'd watched this whole thing happen, one text at a time.</div>
+    <div class="reveal spot" style="margin-top:16px;">
+      <iframe src="https://open.spotify.com/embed/track/4QC1Kd4dctVuVA5I6HFuoj?utm_source=generator&amp;theme=0"
+              width="100%" height="80" frameborder="0" title="Turbo Lover by Judas Priest"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"></iframe>
+    </div>
     <div class="hint">TAP</div>
   </section>
 
@@ -540,20 +546,6 @@
     });
   }, {threshold:[.55]});
   slides.forEach(function(s){ io.observe(s); });
-
-  // Failsafe: if IntersectionObserver never fires (older browsers, odd
-  // renderers), reveal everything rather than leaving a blank screen.
-  setTimeout(function(){
-    slides.forEach(function(s,i){
-      if(!s.classList.contains('on')){
-        s.classList.add('on');
-        if(!seen[i]){
-          seen[i]=1;
-          [].slice.call(s.querySelectorAll('[data-count]')).forEach(function(n){ n.textContent = finalText(n); });
-        }
-      }
-    });
-  }, 2500);
 
   function go(d){
     var i = Math.min(Math.max(Math.round(deck.scrollTop / deck.clientHeight) + d, 0), slides.length - 1);
