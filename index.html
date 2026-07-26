@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en" class="js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#000000">
+<title>Wrapped</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#000;--paper:#fff;
+    --green:#1DB954;--pink:#FF4E9B;--violet:#A96BFF;--amber:#FFA42B;
+    --pad:26px;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;background:var(--ink);color:var(--paper);
+    font-family:var(--sans);overscroll-behavior:none;overflow-x:hidden;}
+  #deck{height:100vh;height:100dvh;overflow-y:scroll;scroll-snap-type:y mandatory;
+    scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  #deck::-webkit-scrollbar{display:none;}
+
+  .slide{
+    height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;
+    position:relative;display:flex;flex-direction:column;justify-content:center;
+    padding:calc(env(safe-area-inset-top) + 76px) var(--pad) calc(env(safe-area-inset-bottom) + 56px);
+    overflow:hidden;isolation:isolate;background:var(--ink);
+  }
+  .slide > *{max-width:100%;min-width:0;position:relative;z-index:1;}
+  .mesh{
+    position:absolute;inset:-15%;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(70% 55% at 18% 18%, var(--m1), transparent 72%),
+      radial-gradient(75% 60% at 88% 38%, var(--m2), transparent 72%),
+      radial-gradient(85% 65% at 42% 92%, var(--m3), transparent 74%);
+    opacity:.6;
+    animation:drift 26s ease-in-out infinite alternate;
+  }
+  @keyframes drift{
+    0%  {transform:translate3d(0,0,0) scale(1);}
+    50% {transform:translate3d(3%,-4%,0) scale(1.12);}
+    100%{transform:translate3d(-4%,3%,0) scale(1.05);}
+  }
+
+  .bars{position:fixed;top:calc(env(safe-area-inset-top) + 15px);left:var(--pad);right:var(--pad);
+    display:flex;gap:5px;z-index:60;}
+  .bar{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.26);overflow:hidden;}
+  .bar i{display:block;height:100%;width:0;background:#fff;border-radius:2px;transition:width .4s ease;}
+  .bar.on i{width:100%;}
+  .tap{position:fixed;top:0;bottom:0;width:30%;z-index:50;}
+  .tap.prev{left:0;} .tap.next{right:0;}
+
+  .eyebrow{font-family:var(--sans);font-size:12px;font-weight:800;letter-spacing:2.6px;
+    text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+  .lede{font-family:var(--sans);font-size:clamp(40px,12.5vw,60px);font-weight:800;
+    line-height:1.02;letter-spacing:-1.5px;margin-bottom:26px;}
+  .lede em{font-style:italic;font-weight:800;color:var(--accent);}
+  .huge{font-family:var(--sans);font-size:clamp(46px,17.5vw,92px);font-weight:800;
+    line-height:.88;letter-spacing:-3px;color:var(--accent);
+    font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+  .huge.solo{font-size:clamp(140px,46vw,220px);letter-spacing:-10px;line-height:.8;}
+  .unit{font-family:var(--sans);font-style:italic;font-weight:600;
+    font-size:clamp(20px,6vw,27px);margin-top:6px;}
+
+  .js .reveal{opacity:0;transform:translateY(26px);
+    transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.3,1);}
+  .js .on .reveal{opacity:1;transform:none;}
+  .on .reveal:nth-child(2){transition-delay:.1s}
+  .on .reveal:nth-child(3){transition-delay:.2s}
+  .on .reveal:nth-child(4){transition-delay:.3s}
+  .on .reveal:nth-child(5){transition-delay:.4s}
+  .js .slow{transition-delay:1.2s !important;}
+
+  .bubble{background:rgba(255,255,255,.09);backdrop-filter:blur(6px);
+    border-radius:22px 22px 22px 6px;padding:17px 19px;font-size:18px;
+    line-height:1.45;font-weight:500;margin-bottom:13px;}
+  .stamp{font-size:12.5px;font-weight:800;letter-spacing:1.1px;opacity:.55;}
+  .rule{border-left:3px solid var(--accent);padding-left:16px;margin-top:26px;
+    font-size:17px;line-height:1.5;font-weight:400;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;
+    background:rgba(255,255,255,.18);border-radius:14px;overflow:hidden;margin-top:30px;}
+  .cell{background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:15px;}
+  .cell b{display:block;font-size:25px;font-weight:800;letter-spacing:-1px;}
+  .cell span{font-size:11px;font-weight:800;letter-spacing:1.2px;opacity:.6;}
+
+  .track{font-family:var(--sans);font-weight:800;font-size:clamp(36px,11vw,50px);line-height:1.02;letter-spacing:-1px;}
+  .artist{font-size:16px;opacity:.62;margin:8px 0 18px;}
+  .quote{font-size:16px;line-height:1.45;background:rgba(255,255,255,.08);
+    backdrop-filter:blur(6px);border-radius:14px;padding:15px 16px;margin-bottom:9px;}
+  .quote em{display:block;font-style:normal;font-size:11.5px;opacity:.5;margin-top:7px;
+    font-weight:800;letter-spacing:.8px;text-transform:uppercase;}
+  .note{font-family:var(--sans);font-weight:600;font-style:italic;font-size:19px;line-height:1.4;margin-bottom:16px;opacity:.9;}
+  .spot{border-radius:12px;overflow:hidden;position:relative;z-index:70;margin-top:6px;}
+
+  .mini{background:rgba(255,255,255,.07);border-radius:16px 16px 16px 5px;
+    padding:11px 14px;font-size:15px;font-weight:500;line-height:1.35;
+    margin-bottom:7px;opacity:.5;max-width:86%;}
+  .mini.hit{background:var(--accent);color:var(--ink);opacity:1;font-weight:800;
+    font-size:28px;letter-spacing:-.9px;padding:14px 18px;max-width:none;
+    font-family:var(--sans);}
+
+  .row{display:flex;align-items:center;gap:13px;margin-bottom:15px;}
+  .rank{font-size:17px;font-weight:800;opacity:.4;width:17px;flex:none;}
+  .sq{width:46px;height:46px;border-radius:5px;flex:none;display:flex;
+    align-items:center;justify-content:center;font-weight:800;font-size:17px;
+    background:var(--accent);color:var(--ink);}
+  .rw{flex:1;min-width:0;}
+  .rw b{display:block;font-size:17px;font-weight:800;letter-spacing:-.4px;}
+  .rw span{font-size:13px;opacity:.55;}
+
+  .hint{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 18px);
+    text-align:center;font-size:11px;font-weight:800;letter-spacing:1.8px;opacity:.4;
+    animation:pulse 2.6s ease-in-out infinite;z-index:2;}
+  @keyframes pulse{0%,100%{opacity:.22}50%{opacity:.65}}
+
+  /* photos */
+  .photo-solo{border-radius:16px;overflow:hidden;margin-top:18px;
+    box-shadow:0 14px 34px rgba(0,0,0,.5);}
+  .photo-solo img{width:100%;display:block;object-fit:cover;max-height:46vh;}
+  .strip{display:flex;gap:9px;margin-top:18px;overflow-x:auto;padding:2px 2px 8px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .strip::-webkit-scrollbar{display:none;}
+  .strip img{height:132px;width:auto;border-radius:11px;object-fit:cover;flex:none;
+    box-shadow:0 10px 26px rgba(0,0,0,.55);}
+  .strip.tall img{height:168px;}
+
+  /* concert / places lists */
+  .setlist{margin-top:22px;max-height:52vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .setlist .item{display:flex;align-items:baseline;gap:12px;padding:11px 0;
+    border-bottom:1px solid rgba(255,255,255,.12);}
+  .setlist .n{font-size:13px;font-weight:800;color:var(--accent);width:20px;flex:none;
+    font-variant-numeric:tabular-nums;}
+  .setlist .t{font-size:16.5px;font-weight:700;letter-spacing:-.2px;}
+  .setlist .t small{display:block;font-size:12px;font-weight:500;opacity:.55;margin-top:2px;}
+
+  .placelist .item{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+  .placelist .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);
+    flex:none;margin-top:7px;box-shadow:0 0 0 4px rgba(255,255,255,.08);}
+  .placelist b{display:block;font-size:18px;font-weight:800;letter-spacing:-.3px;}
+  .placelist span{font-size:13.5px;opacity:.6;}
+
+  @media (prefers-reduced-motion:reduce){
+    .js .reveal{transition:none;opacity:1;transform:none}
+    .hint{animation:none}.mesh{animation:none}#deck{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="bars" id="bars"></div>
+<div class="tap prev" id="tapPrev"></div>
+<div class="tap next" id="tapNext"></div>
+
+<main id="deck">
+
+  <!-- ACT 1 — COLD OPEN -->
+
+  <section class="slide" style="--accent:var(--green);--m1:#1a8f4e;--m2:#0d5c33;--m3:#06301b">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">Relationship Wrapped &middot; for Advait</div>
+    <div class="reveal photo-solo" style="max-width:210px;">
+      <img src="images/IMG-20250513-WA0012.jpg" alt="matrimonial site profile card" loading="lazy">
+    </div>
+    <div class="lede reveal" style="margin-top:16px;">It started<br>with a <em>text.</em></div>
+    <div class="reveal">
+      <div class="bubble">Hi Samruddhi? This is Advait from the um website 😅</div>
+      <div class="stamp">ADVAIT &middot; 14 DEC 2024 &middot; 10:58 AM</div>
+    </div>
+    <div class="rule reveal">Neither of them knew it yet. That was the first of 147,890.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--green);--m1:#23b063;--m2:#12703e;--m3:#083a20">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">Before the numbers</div>
+    <div class="reveal">
+      <div class="huge solo" data-count="589">0</div>
+      <div class="unit">days ago, a stranger said hi</div>
+    </div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <!-- ACT 2 — THE REAL NUMBERS -->
+
+  <section class="slide" style="--accent:var(--pink);--m1:#a6296b;--m2:#6b1544;--m3:#330a20">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">Since that morning</div>
+    <div class="reveal">
+      <div class="huge" data-count="147890">0</div>
+      <div class="unit">messages</div>
+    </div>
+    <div class="grid reveal">
+      <div class="cell"><b data-count="615298">0</b><span>WORDS</span></div>
+      <div class="cell"><b data-count="559">0</b><span>ACTIVE DAYS</span></div>
+      <div class="cell"><b data-count="78101">0</b><span>SAMRUDDHI</span></div>
+      <div class="cell"><b data-count="69789">0</b><span>ADVAIT</span></div>
+    </div>
+    <div class="rule reveal">More words than all three Lord of the Rings books. Samruddhi wrote 12% more of them than Advait did.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--pink);--m1:#c23a80;--m2:#7a1f52;--m3:#3a0e27">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">The witching hour</div>
+    <div class="reveal">
+      <div class="huge"><span data-count="11">0</span><span style="font-size:.4em;">PM</span></div>
+      <div class="unit">20,213 messages, 13.7% of everything</div>
+    </div>
+    <div class="rule reveal">Not most nights. Just most texts — more than any other single hour, every single day, without fail.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--pink);--m1:#a6296b;--m2:#6b1544;--m3:#330a20">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">Apart vs. together</div>
+    <div class="grid reveal" style="margin-top:6px;">
+      <div class="cell"><b data-count="11.4">0</b><span>PHOTOS/DAY TOGETHER</span></div>
+      <div class="cell"><b data-count="5.1">0</b><span>PHOTOS/DAY APART</span></div>
+    </div>
+    <div class="rule reveal">Even standing in the same room, they kept hitting send. Apart, they still found something worth sharing.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--pink);--m1:#8c2c68;--m2:#571640;--m3:#280a1e">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">Times they didn't need to text</div>
+    <div class="reveal">
+      <div class="mini hit" style="font-size:20px;">24 Dec &rarr; 4 Jan</div>
+    </div>
+    <div class="rule reveal" style="margin-top:10px;">12 days, 37 messages total. The holidays.</div>
+    <div class="reveal" style="margin-top:22px;">
+      <div class="mini hit" style="font-size:20px;">25 Nov &rarr; 4 Dec</div>
+    </div>
+    <div class="rule reveal" style="margin-top:10px;">10 days, 62 messages total. The wedding in India.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <!-- ACT 3 — HOW THEY TALK -->
+
+  <section class="slide" style="--accent:var(--violet);--m1:#6b32c9;--m2:#3f1c85;--m3:#1c0b3d">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">The names only they use</div>
+    <div class="reveal" style="margin-top:6px;">
+      <div class="row"><span class="rank">01</span><div class="sq">S</div>
+        <div class="rw"><b>Avu</b><span>2,070 times &middot; Samruddhi &rarr; Advait</span></div></div>
+      <div class="row"><span class="rank">02</span><div class="sq">A</div>
+        <div class="rw"><b>Samroo</b><span>1,975 times &middot; Advait &rarr; Samruddhi</span></div></div>
+      <div class="row"><span class="rank">03</span><div class="sq">A</div>
+        <div class="rw"><b>sumsum</b><span>1,359 times &middot; Advait &rarr; Samruddhi</span></div></div>
+    </div>
+    <div class="rule reveal">And the o's escalate under pressure: samroo &rarr; samrooo &rarr; samroooo &rarr; samroooooo.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--violet);--m1:#7d3fe0;--m2:#4a2299;--m3:#220f4a">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">25 May 2025</div>
+    <div class="reveal">
+      <div class="huge" data-count="44">0</div>
+      <div class="unit">"love you"s in one day — the record</div>
+    </div>
+    <div class="reveal photo-solo" style="margin-top:20px;max-width:230px;">
+      <img src="images/IMG-20250515-WA0003.jpg" alt="I love you Advu traced in condensation" loading="lazy">
+    </div>
+    <div class="rule reveal">No occasion. No event. They just missed each other and said so, forty-four times.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <!-- ACT 4 — MUSIC INTERLUDE -->
+
+  <section class="slide" style="--accent:var(--amber);--m1:#a86a12;--m2:#6b4208;--m3:#331f03">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">Track 01 &middot; day eight</div>
+    <div class="reveal">
+      <div class="track">Watershed</div>
+      <div class="artist">Opeth &middot; 22 December 2024</div>
+    </div>
+    <div class="reveal">
+      <div class="quote">I wish I could listen to opeth for the first time of my life again<em>Advait &middot; 7:55 PM</em></div>
+      <div class="quote">Especially Hessian peel<em>Samruddhi &middot; two days later</em></div>
+    </div>
+    <div class="reveal spot">
+      <iframe src="https://open.spotify.com/embed/track/03MyDu8s25r91hCO0PnRf8?utm_source=generator&amp;theme=0"
+              width="100%" height="152" frameborder="0" title="Hessian Peel by Opeth"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"></iframe>
+    </div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--amber);--m1:#8f5410;--m2:#5a3407;--m3:#291702">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">Feb 2025 &middot; Seattle</div>
+    <div class="lede reveal">Their first<br><em>concert.</em></div>
+    <div class="reveal">
+      <div class="quote">I booked Russian circles for us<em>Advait &middot; 25 Feb, 10:46 PM</em></div>
+    </div>
+    <div class="reveal spot">
+      <iframe src="https://open.spotify.com/embed/track/1zALp6nX1anu28DbSi0iIY?utm_source=generator&amp;theme=0"
+              width="100%" height="152" frameborder="0" title="Harper Lewis by Russian Circles"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"></iframe>
+    </div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--amber);--m1:#a86a12;--m2:#6b4208;--m3:#331f03">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">And it kept going</div>
+    <div class="lede reveal" style="font-size:clamp(30px,9vw,42px);">Every show<br>since.</div>
+    <div class="setlist reveal">
+      <div class="item"><span class="n">01</span><span class="t">Russian Circles</span></div>
+      <div class="item"><span class="n">02</span><span class="t">Judas Priest</span></div>
+      <div class="item"><span class="n">03</span><span class="t">Opeth</span></div>
+      <div class="item"><span class="n">04</span><span class="t">Coroner &amp; Heathen</span></div>
+      <div class="item"><span class="n">05</span><span class="t">Hulder</span></div>
+      <div class="item"><span class="n">06</span><span class="t">Monolord, Mizmor</span></div>
+      <div class="item"><span class="n">07</span><span class="t">Anvil, Midnite Hellion</span></div>
+      <div class="item"><span class="n">08</span><span class="t">Acid Bath<small>headliner, rare reunion shows &middot; with High on Fire, YOB, Witch Mountain</small></span></div>
+      <div class="item"><span class="n">09</span><span class="t">Wolfmother</span></div>
+      <div class="item"><span class="n">10</span><span class="t">Ulcerate</span></div>
+      <div class="item"><span class="n">11</span><span class="t">Coroner, Heathen<small>Dissonance Over the West tour</small></span></div>
+      <div class="item"><span class="n">12</span><span class="t">Dethklok</span></div>
+      <div class="item"><span class="n">13</span><span class="t">Ghost</span></div>
+      <div class="item"><span class="n">14</span><span class="t">Infected Mushroom</span></div>
+    </div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <!-- ACT 5 — MILESTONES, CHRONOLOGICAL -->
+
+  <section class="slide" style="--accent:var(--violet);--m1:#6b32c9;--m2:#3f1c85;--m3:#1c0b3d">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">14 February 2025 &middot; 11:58 PM</div>
+    <div class="lede reveal">He said it<br><em>first.</em></div>
+    <div class="reveal">
+      <div class="mini">I'm respected beefed</div>
+      <div class="mini">I wished you were here</div>
+      <div class="mini">So drunk</div>
+      <div class="mini">I'm froo</div>
+      <div class="mini hit">I l u</div>
+    </div>
+    <div class="rule reveal">Two minutes before Valentine's Day ran out. Samruddhi never answered it &mdash; she was busy asking what "froo" meant.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:#fff;--m1:#242424;--m2:#161616;--m3:#0a0a0a">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">22 February 2025</div>
+    <div class="reveal">
+      <div class="huge solo">0</div>
+      <div class="unit">messages. all day.</div>
+    </div>
+    <div class="rule reveal slow" style="margin-top:32px">
+      Her first trip to Seattle. He was in the room.<br><br>
+      And the next day he said &mdash;<br>
+      <span style="font-family:var(--sans);font-weight:800;font-style:italic;font-size:22px;">"Samroo I'm falling in love."</span>
+    </div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--pink);--m1:#a6296b;--m2:#6b1544;--m3:#330a20">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">25 February 2025</div>
+    <div class="lede reveal">The day it<br>all <em>stacked.</em></div>
+    <div class="reveal">
+      <div class="quote">8:24 AM<em>Samruddhi texted "I love you" first</em></div>
+      <div class="quote">9:22 AM<em>Advait said it back</em></div>
+    </div>
+    <div class="rule reveal">The same day, somewhere in between, they both decided they wanted to get married.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--amber);--m1:#a86a12;--m2:#6b4208;--m3:#331f03">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">2&ndash;6 May 2025 &middot; Mexico City</div>
+    <div class="lede reveal">He had a<br><em>card trick.</em></div>
+    <div class="rule reveal">4 May 2025, Mexico City. He did a card trick &mdash; and somehow a ring showed up at the end of it. Best trick he's ever pulled. No photo exists: his camera wasn't charged. Some tricks you only get to see once.</div>
+    <div class="strip tall reveal">
+      <img src="images/IMG-20250502-WA0021.jpg" alt="rainy airport window" loading="lazy">
+      <img src="images/IMG-20250506-WA0011.jpg" alt="intertwined hands" loading="lazy">
+      <img src="images/IMG-20250511-WA0037.jpg" alt="night selfie" loading="lazy">
+      <img src="images/IMG-20250511-WA0050.jpg" alt="Palacio de Bellas Artes" loading="lazy">
+      <img src="images/IMG-20250511-WA0070.jpg" alt="portrait against bougainvillea" loading="lazy">
+    </div>
+    <div class="reveal spot" style="margin-top:16px;">
+      <iframe src="https://open.spotify.com/embed/track/0L7zm6afBEtrNKo6C6Gj08?utm_source=generator&amp;theme=0"
+              width="100%" height="80" frameborder="0" title="Painkiller by Judas Priest"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"></iframe>
+    </div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--pink);--m1:#a6296b;--m2:#6b1544;--m3:#330a20">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">8 August 2025 &middot; Seattle</div>
+    <div class="lede reveal">The <em>wedding.</em></div>
+    <div class="strip tall reveal">
+      <img src="images/IMG-20250808-WA0011.jpg" alt="hands and rings" loading="lazy">
+      <img src="images/IMG-20250808-WA0015.jpg" alt="hallway selfie, wedding day" loading="lazy">
+      <img src="images/IMG-20250809-WA0120.jpg" alt="reception, dusk" loading="lazy">
+    </div>
+    <div class="rule reveal">Reception with friends the next night &mdash; surrounded by everyone who'd watched this whole thing happen, one text at a time.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--pink);--m1:#8c2c68;--m2:#571640;--m3:#280a1e">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">31 August 2025 &middot; Seattle</div>
+    <div class="lede reveal">The mini<br><em>honeymoon.</em></div>
+    <div class="strip tall reveal">
+      <img src="images/IMG-20250903-WA0023.jpg" alt="mirror selfie, hotel room" loading="lazy">
+      <img src="images/IMG-20250903-WA0018.jpg" alt="dinner date under string lights" loading="lazy">
+      <img src="images/IMG-20250903-WA0031.jpg" alt="sunset over the mountains" loading="lazy">
+    </div>
+    <div class="rule reveal">First visit back as married people. Kayaking, dinners out, chai on the couch &mdash; the ordinary version of forever.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--amber);--m1:#c9820f;--m2:#7a4d07;--m3:#3a2503">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">25 &amp; 28 November 2025</div>
+    <div class="lede reveal">And then, <em>again</em><br>&mdash; in India.</div>
+    <div class="strip tall reveal">
+      <img src="images/IMG-20251120-WA0029.jpg" alt="wedding invitation" loading="lazy">
+      <img src="images/IMG-20251211-WA0006.jpg" alt="seated on the mandap, looking at the camera" loading="lazy">
+      <img src="images/IMG-20251208-WA0000.jpg" alt="candid, laughing, wedding attire" loading="lazy">
+      <img src="images/IMG-20251208-WA0020.jpg" alt="rice into the fire" loading="lazy">
+      <img src="images/IMG-20251221-WA0005.jpg" alt="hands clasped behind backs, henna" loading="lazy">
+    </div>
+    <div class="rule reveal">The Indian wedding, then the Bangalore reception three days later. Two weddings, one year.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--green);--m1:#1a8f4e;--m2:#0d5c33;--m3:#06301b">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">30 Nov &ndash; 3 Dec 2025</div>
+    <div class="lede reveal">Kumarakom,<br><em>Kerala.</em></div>
+    <div class="rule reveal">Straight from the wedding into the backwaters. No photos survive from this one &mdash; just two boarding passes and a few quiet days that didn't need documenting.</div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <section class="slide" style="--accent:var(--green);--m1:#23b063;--m2:#12703e;--m3:#083a20">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">April 2026 &middot; Joshua Tree</div>
+    <div class="lede reveal">Samruddhi's <em>birthday,</em><br>in the desert.</div>
+    <div class="strip tall reveal">
+      <img src="images/IMG-20260420-WA0032.jpg" alt="on top of a rock pile" loading="lazy">
+      <img src="images/IMG-20260420-WA0022.jpg" alt="mirror selfie, cheek kiss" loading="lazy">
+      <img src="images/IMG-20260421-WA0004.jpg" alt="joyful jump in the desert" loading="lazy">
+      <img src="images/IMG-20260421-WA0027.jpg" alt="birthday party with friends" loading="lazy">
+    </div>
+    <div class="reveal spot" style="margin-top:16px;">
+      <iframe src="https://open.spotify.com/embed/track/03sEzk1VyrUZSgyhoQR0LZ?utm_source=generator&amp;theme=0"
+              width="100%" height="80" frameborder="0" title="Pneuma by TOOL"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"></iframe>
+    </div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <!-- ACT 6 — PLACES -->
+
+  <section class="slide" style="--accent:var(--violet);--m1:#6b32c9;--m2:#3f1c85;--m3:#1c0b3d">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">Where love took them</div>
+    <div class="placelist reveal">
+      <div class="item"><div class="dot"></div><div><b>Seattle</b><span>his city &middot; wedding, reception, and back again</span></div></div>
+      <div class="item"><div class="dot"></div><div><b>San Diego</b><span>her city</span></div></div>
+      <div class="item"><div class="dot"></div><div><b>Mexico City</b><span>the proposal</span></div></div>
+      <div class="item"><div class="dot"></div><div><b>Joshua Tree</b><span>her birthday</span></div></div>
+      <div class="item"><div class="dot"></div><div><b>Bangalore</b><span>the Indian wedding</span></div></div>
+      <div class="item"><div class="dot"></div><div><b>Kumarakom, Kerala</b><span>straight after</span></div></div>
+    </div>
+    <div class="hint">TAP</div>
+  </section>
+
+  <!-- CLOSE -->
+
+  <section class="slide" style="--accent:var(--green);--m1:#1a8f4e;--m2:#0d5c33;--m3:#06301b">
+    <div class="mesh"></div>
+    <div class="eyebrow reveal">8 August 2026</div>
+    <div class="lede reveal">One year<br>down.</div>
+    <div class="rule reveal slow">147,890 messages in, two weddings, a proposal in a foreign city, and a nickname that's still growing more o's.<br><br>Year two starts now.</div>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  var deck = document.getElementById('deck'),
+      slides = [].slice.call(deck.querySelectorAll('.slide')),
+      bars = document.getElementById('bars');
+
+  slides.forEach(function(){
+    var b = document.createElement('div'); b.className = 'bar';
+    b.appendChild(document.createElement('i')); bars.appendChild(b);
+  });
+  var barEls = [].slice.call(bars.children);
+
+  function finalText(el){
+    var raw = el.getAttribute('data-count');
+    var decimals = (raw.split('.')[1] || '').length;
+    var target = parseFloat(raw);
+    return decimals ? target.toFixed(decimals) : Math.round(target).toLocaleString();
+  }
+
+  function countUp(el){
+    var raw = el.getAttribute('data-count');
+    var target = parseFloat(raw), decimals = (raw.split('.')[1] || '').length;
+    var t0 = null, dur = 1600;
+    function frame(ts){
+      if(t0 === null) t0 = ts;
+      var p = Math.min((ts - t0)/dur, 1);
+      var val = target * (1 - Math.pow(1-p, 3));
+      el.textContent = decimals ? val.toFixed(decimals) : Math.round(val).toLocaleString();
+      if(p < 1) requestAnimationFrame(frame);
+      else el.textContent = finalText(el);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  var seen = {};
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      var i = slides.indexOf(e.target);
+      if(e.isIntersecting && e.intersectionRatio > .55){
+        e.target.classList.add('on');
+        barEls.forEach(function(b,j){ b.classList.toggle('on', j <= i); });
+        if(!seen[i]){
+          seen[i] = 1;
+          [].slice.call(e.target.querySelectorAll('[data-count]')).forEach(function(n, k){
+            setTimeout(function(){ countUp(n); }, k * 90);
+          });
+        }
+      }
+    });
+  }, {threshold:[.55]});
+  slides.forEach(function(s){ io.observe(s); });
+
+  // Failsafe: if IntersectionObserver never fires (older browsers, odd
+  // renderers), reveal everything rather than leaving a blank screen.
+  setTimeout(function(){
+    slides.forEach(function(s,i){
+      if(!s.classList.contains('on')){
+        s.classList.add('on');
+        if(!seen[i]){
+          seen[i]=1;
+          [].slice.call(s.querySelectorAll('[data-count]')).forEach(function(n){ n.textContent = finalText(n); });
+        }
+      }
+    });
+  }, 2500);
+
+  function go(d){
+    var i = Math.min(Math.max(Math.round(deck.scrollTop / deck.clientHeight) + d, 0), slides.length - 1);
+    slides[i].scrollIntoView({behavior:'smooth'});
+  }
+  document.getElementById('tapNext').onclick = function(){ go(1); };
+  document.getElementById('tapPrev').onclick = function(){ go(-1); };
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){ e.preventDefault(); go(1); }
+    if(e.key==='ArrowLeft' ||e.key==='ArrowUp'){ e.preventDefault(); go(-1); }
+  });
+})();
+</script>
+</body>
+</html>
