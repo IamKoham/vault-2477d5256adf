@@ -127,14 +127,21 @@
     box-shadow:0 10px 26px rgba(0,0,0,.55);}
   .strip.tall img{height:168px;}
 
-  /* concert / places lists */
-  .setlist{margin-top:22px;max-height:52vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-  .setlist .item{display:flex;align-items:baseline;gap:12px;padding:11px 0;
-    border-bottom:1px solid rgba(255,255,255,.12);}
-  .setlist .n{font-size:13px;font-weight:800;color:var(--accent);width:20px;flex:none;
-    font-variant-numeric:tabular-nums;}
-  .setlist .t{font-size:16.5px;font-weight:700;letter-spacing:-.2px;}
-  .setlist .t small{display:block;font-size:12px;font-weight:500;opacity:.55;margin-top:2px;}
+  /* places list */
+  .cardstack{position:relative;height:250px;margin-top:30px;touch-action:pan-y;z-index:80;}
+  .bcard{position:absolute;left:0;top:0;right:0;height:100%;border-radius:20px;
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    text-align:center;padding:24px;box-sizing:border-box;
+    background:linear-gradient(155deg, rgba(255,255,255,.16), rgba(255,255,255,.04));
+    border:1px solid rgba(255,255,255,.22);box-shadow:0 20px 44px rgba(0,0,0,.55);
+    font-family:var(--sans);font-weight:800;font-size:clamp(22px,7vw,30px);letter-spacing:-.4px;
+    transition:transform .38s cubic-bezier(.2,.8,.2,1), opacity .3s;
+    will-change:transform;user-select:none;-webkit-user-select:none;cursor:grab;}
+  .bcard.dragging{transition:none;cursor:grabbing;}
+  .bcard small{display:block;font-family:var(--sans);font-weight:600;font-style:italic;
+    font-size:13px;opacity:.6;margin-top:10px;letter-spacing:.2px;}
+  .cardhint{margin-top:14px;text-align:center;font-size:11px;font-weight:800;
+    letter-spacing:1.6px;opacity:.4;text-transform:uppercase;}
 
   .placelist .item{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
   .placelist .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);
@@ -224,20 +231,6 @@
     <div class="hint">TAP</div>
   </section>
 
-  <section class="slide" style="--accent:var(--pink);--m1:#8c2c68;--m2:#571640;--m3:#280a1e">
-    <div class="mesh"></div>
-    <div class="eyebrow reveal">Times they didn't need to text</div>
-    <div class="reveal">
-      <div class="mini hit" style="font-size:20px;">24 Dec &rarr; 4 Jan</div>
-    </div>
-    <div class="rule reveal" style="margin-top:10px;">12 days, 37 messages total. The holidays.</div>
-    <div class="reveal" style="margin-top:22px;">
-      <div class="mini hit" style="font-size:20px;">25 Nov &rarr; 4 Dec</div>
-    </div>
-    <div class="rule reveal" style="margin-top:10px;">10 days, 62 messages total. The wedding in India.</div>
-    <div class="hint">TAP</div>
-  </section>
-
   <!-- ACT 3 — HOW THEY TALK -->
 
   <section class="slide" style="--accent:var(--violet);--m1:#6b32c9;--m2:#3f1c85;--m3:#1c0b3d">
@@ -279,8 +272,9 @@
       <div class="artist">Opeth &middot; 22 December 2024</div>
     </div>
     <div class="reveal">
-      <div class="quote">I wish I could listen to opeth for the first time of my life again<em>Advait &middot; 7:55 PM</em></div>
-      <div class="quote">Especially Hessian peel<em>Samruddhi &middot; two days later</em></div>
+      <div class="quote">I wish I could listen to opeth for the first time of my life again<em>Advait &middot; 22 Dec, 7:55 PM</em></div>
+      <div class="quote">I loved it<em>Samruddhi &middot; 24 Dec, 4:38 PM</em></div>
+      <div class="quote">Especially Hessian peel<em>Samruddhi &middot; 24 Dec, 6:05 PM</em></div>
     </div>
     <div class="reveal spot">
       <iframe src="https://open.spotify.com/embed/track/03MyDu8s25r91hCO0PnRf8?utm_source=generator&amp;theme=0"
@@ -311,22 +305,23 @@
     <div class="mesh"></div>
     <div class="eyebrow reveal">And it kept going</div>
     <div class="lede reveal" style="font-size:clamp(30px,9vw,42px);">Every show<br>since.</div>
-    <div class="setlist reveal">
-      <div class="item"><span class="n">01</span><span class="t">Russian Circles</span></div>
-      <div class="item"><span class="n">02</span><span class="t">Judas Priest</span></div>
-      <div class="item"><span class="n">03</span><span class="t">Opeth</span></div>
-      <div class="item"><span class="n">04</span><span class="t">Coroner &amp; Heathen</span></div>
-      <div class="item"><span class="n">05</span><span class="t">Hulder</span></div>
-      <div class="item"><span class="n">06</span><span class="t">Monolord, Mizmor</span></div>
-      <div class="item"><span class="n">07</span><span class="t">Anvil, Midnite Hellion</span></div>
-      <div class="item"><span class="n">08</span><span class="t">Acid Bath<small>headliner, rare reunion shows &middot; with High on Fire, YOB, Witch Mountain</small></span></div>
-      <div class="item"><span class="n">09</span><span class="t">Wolfmother</span></div>
-      <div class="item"><span class="n">10</span><span class="t">Ulcerate</span></div>
-      <div class="item"><span class="n">11</span><span class="t">Coroner, Heathen<small>Dissonance Over the West tour</small></span></div>
-      <div class="item"><span class="n">12</span><span class="t">Dethklok</span></div>
-      <div class="item"><span class="n">13</span><span class="t">Ghost</span></div>
-      <div class="item"><span class="n">14</span><span class="t">Infected Mushroom</span></div>
+    <div class="cardstack reveal" id="bandStack">
+      <div class="bcard">Russian Circles</div>
+      <div class="bcard">Judas Priest</div>
+      <div class="bcard">Opeth</div>
+      <div class="bcard">Coroner &amp; Heathen</div>
+      <div class="bcard">Hulder</div>
+      <div class="bcard">Monolord, Mizmor</div>
+      <div class="bcard">Anvil, Midnite Hellion</div>
+      <div class="bcard">Acid Bath<small>headliner, rare reunion shows &middot; with High on Fire, YOB, Witch Mountain</small></div>
+      <div class="bcard">Wolfmother</div>
+      <div class="bcard">Ulcerate</div>
+      <div class="bcard">Coroner, Heathen<small>Dissonance Over the West tour</small></div>
+      <div class="bcard">Dethklok</div>
+      <div class="bcard">Ghost</div>
+      <div class="bcard">Infected Mushroom</div>
     </div>
+    <div class="cardhint reveal">swipe the card &middot; 14 shows</div>
     <div class="hint">TAP</div>
   </section>
 
@@ -343,7 +338,7 @@
       <div class="mini">I'm froo</div>
       <div class="mini hit">I l u</div>
     </div>
-    <div class="rule reveal">Two minutes before Valentine's Day ran out. Samruddhi never answered it &mdash; she was busy asking what "froo" meant.</div>
+    <div class="rule reveal">Two minutes before Valentine's Day ran out. Samruddhi never answered it. She was too busy asking what "froo" meant.</div>
     <div class="hint">TAP</div>
   </section>
 
@@ -356,7 +351,7 @@
     </div>
     <div class="rule reveal slow" style="margin-top:32px">
       Her first trip to Seattle. He was in the room.<br><br>
-      And the next day he said &mdash;<br>
+      And the next day he said:<br>
       <span style="font-family:var(--sans);font-weight:800;font-style:italic;font-size:22px;">"Samroo I'm falling in love."</span>
     </div>
     <div class="hint">TAP</div>
@@ -376,9 +371,9 @@
 
   <section class="slide" style="--accent:var(--amber);--m1:#a86a12;--m2:#6b4208;--m3:#331f03">
     <div class="mesh"></div>
-    <div class="eyebrow reveal">2&ndash;6 May 2025 &middot; Mexico City</div>
+    <div class="eyebrow reveal">2 to 6 May 2025 &middot; Mexico City</div>
     <div class="lede reveal">He had a<br><em>card trick.</em></div>
-    <div class="rule reveal">4 May 2025, Mexico City. He did a card trick &mdash; and somehow a ring showed up at the end of it. Best trick he's ever pulled. No photo exists: his camera wasn't charged. Some tricks you only get to see once.</div>
+    <div class="rule reveal">4 May 2025. He asked her to pick a card. Somehow, by the end of the trick, there was a ring on her finger instead. His camera wasn't charged, so there's no footage of how he pulled it off. Honestly, that tracks. The best magic never holds up on video.</div>
     <div class="strip tall reveal">
       <img src="images/IMG-20250502-WA0021.jpg" alt="rainy airport window" loading="lazy">
       <img src="images/IMG-20250506-WA0011.jpg" alt="intertwined hands" loading="lazy">
@@ -404,7 +399,7 @@
       <img src="images/IMG-20250808-WA0015.jpg" alt="hallway selfie, wedding day" loading="lazy">
       <img src="images/IMG-20250809-WA0120.jpg" alt="reception, dusk" loading="lazy">
     </div>
-    <div class="rule reveal">Reception with friends the next night &mdash; surrounded by everyone who'd watched this whole thing happen, one text at a time.</div>
+    <div class="rule reveal">Reception with friends the next night, surrounded by everyone who'd watched this whole thing happen, one text at a time.</div>
     <div class="reveal spot" style="margin-top:16px;">
       <iframe src="https://open.spotify.com/embed/track/4QC1Kd4dctVuVA5I6HFuoj?utm_source=generator&amp;theme=0"
               width="100%" height="80" frameborder="0" title="Turbo Lover by Judas Priest"
@@ -423,14 +418,14 @@
       <img src="images/IMG-20250903-WA0018.jpg" alt="dinner date under string lights" loading="lazy">
       <img src="images/IMG-20250903-WA0031.jpg" alt="sunset over the mountains" loading="lazy">
     </div>
-    <div class="rule reveal">First visit back as married people. Kayaking, dinners out, chai on the couch &mdash; the ordinary version of forever.</div>
+    <div class="rule reveal">First visit back as married people. A mirror selfie, dinner under string lights, and a sky that showed off for them. The ordinary version of forever.</div>
     <div class="hint">TAP</div>
   </section>
 
   <section class="slide" style="--accent:var(--amber);--m1:#c9820f;--m2:#7a4d07;--m3:#3a2503">
     <div class="mesh"></div>
     <div class="eyebrow reveal">25 &amp; 28 November 2025</div>
-    <div class="lede reveal">And then, <em>again</em><br>&mdash; in India.</div>
+    <div class="lede reveal">And then, <em>again,</em><br>in India.</div>
     <div class="strip tall reveal">
       <img src="images/IMG-20251120-WA0029.jpg" alt="wedding invitation" loading="lazy">
       <img src="images/IMG-20251211-WA0006.jpg" alt="seated on the mandap, looking at the camera" loading="lazy">
@@ -443,9 +438,9 @@
 
   <section class="slide" style="--accent:var(--green);--m1:#1a8f4e;--m2:#0d5c33;--m3:#06301b">
     <div class="mesh"></div>
-    <div class="eyebrow reveal">30 Nov &ndash; 3 Dec 2025</div>
+    <div class="eyebrow reveal">30 Nov to 3 Dec 2025</div>
     <div class="lede reveal">Kumarakom,<br><em>Kerala.</em></div>
-    <div class="rule reveal">Straight from the wedding into the backwaters. No photos survive from this one &mdash; just two boarding passes and a few quiet days that didn't need documenting.</div>
+    <div class="rule reveal">Straight from the wedding into the backwaters. No photos survive from this one: just two boarding passes and a few quiet days that didn't need documenting.</div>
     <div class="hint">TAP</div>
   </section>
 
@@ -557,6 +552,73 @@
     if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){ e.preventDefault(); go(1); }
     if(e.key==='ArrowLeft' ||e.key==='ArrowUp'){ e.preventDefault(); go(-1); }
   });
+})();
+
+(function(){
+  var stack = document.getElementById('bandStack');
+  if(!stack) return;
+  var order = [].slice.call(stack.querySelectorAll('.bcard'));
+
+  function layout(){
+    order.forEach(function(c, i){
+      c.style.zIndex = order.length - i;
+      c.style.opacity = i < 5 ? 1 : 0;
+      var depth = Math.min(i, 4);
+      var rot = i === 0 ? 0 : (i % 2 === 0 ? 1 : -1) * (1 + depth * 0.6);
+      c.style.transform = 'translateY(' + (depth*7) + 'px) scale(' + (1 - depth*0.035) + ') rotate(' + rot + 'deg)';
+    });
+  }
+  layout();
+
+  var active = null, startX = 0, startY = 0, curX = 0, locked = null;
+
+  function onDown(e){
+    if(order[0] !== e.target.closest('.bcard')) return;
+    active = order[0];
+    var pt = e.touches ? e.touches[0] : e;
+    startX = pt.clientX; startY = pt.clientY; curX = 0; locked = null;
+    active.classList.add('dragging');
+  }
+  function onMove(e){
+    if(!active) return;
+    var pt = e.touches ? e.touches[0] : e;
+    var dx = pt.clientX - startX, dy = pt.clientY - startY;
+    if(locked === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)){
+      locked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+    }
+    if(locked === 'y'){ active.classList.remove('dragging'); active = null; return; }
+    if(locked === 'x'){
+      if(e.cancelable) e.preventDefault();
+      curX = dx;
+      active.style.transform = 'translateX(' + dx + 'px) rotate(' + (dx/16) + 'deg)';
+    }
+  }
+  function onUp(){
+    if(!active) return;
+    active.classList.remove('dragging');
+    if(Math.abs(curX) > 85){
+      var dir = curX > 0 ? 1 : -1, moved = active;
+      moved.style.transition = 'transform .4s ease, opacity .35s ease';
+      moved.style.transform = 'translateX(' + (dir*520) + 'px) rotate(' + (dir*26) + 'deg)';
+      moved.style.opacity = '0';
+      setTimeout(function(){
+        order.push(order.shift());
+        moved.style.transition = '';
+        layout();
+      }, 380);
+    } else {
+      active.style.transform = '';
+      layout();
+    }
+    active = null; curX = 0;
+  }
+
+  stack.addEventListener('touchstart', onDown, {passive:true});
+  stack.addEventListener('touchmove', onMove, {passive:false});
+  stack.addEventListener('touchend', onUp);
+  stack.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
 })();
 </script>
 </body>
