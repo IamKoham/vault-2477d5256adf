@@ -140,6 +140,8 @@
   .bcard.dragging{transition:none;cursor:grabbing;}
   .bcard small{display:block;font-family:var(--sans);font-weight:600;font-style:italic;
     font-size:13px;opacity:.6;margin-top:10px;letter-spacing:.2px;}
+  .bcard img.blogo{max-width:80%;max-height:64%;object-fit:contain;
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,.6));pointer-events:none;}
   .cardhint{margin-top:14px;text-align:center;font-size:11px;font-weight:800;
     letter-spacing:1.6px;opacity:.4;text-transform:uppercase;}
 
@@ -306,22 +308,29 @@
     <div class="eyebrow reveal">And it kept going</div>
     <div class="lede reveal" style="font-size:clamp(30px,9vw,42px);">Every show<br>since.</div>
     <div class="cardstack reveal" id="bandStack">
-      <div class="bcard">Russian Circles</div>
-      <div class="bcard">Judas Priest</div>
-      <div class="bcard">Opeth</div>
-      <div class="bcard">Coroner &amp; Heathen</div>
+      <div class="bcard"><img class="blogo" src="logos/russian%20circle.jpg" alt="Russian Circles"></div>
+      <div class="bcard"><img class="blogo" src="logos/Judas%20Priest.jpg" alt="Judas Priest"></div>
+      <div class="bcard"><img class="blogo" src="logos/Opeth.jpg" alt="Opeth"></div>
+      <div class="bcard"><img class="blogo" src="logos/Coroner.jpg" alt="Coroner"></div>
+      <div class="bcard"><img class="blogo" src="logos/Heathen.jpg" alt="Heathen"></div>
       <div class="bcard">Hulder</div>
-      <div class="bcard">Monolord, Mizmor</div>
-      <div class="bcard">Anvil, Midnite Hellion</div>
-      <div class="bcard">Acid Bath<small>headliner, rare reunion shows &middot; with High on Fire, YOB, Witch Mountain</small></div>
+      <div class="bcard">Monolord</div>
+      <div class="bcard">Mizmor</div>
+      <div class="bcard">Anvil</div>
+      <div class="bcard">Midnite Hellion</div>
+      <div class="bcard">Acid Bath<small>headliner &middot; rare reunion shows</small></div>
+      <div class="bcard">High on Fire<small>opening for Acid Bath</small></div>
+      <div class="bcard">YOB<small>opening for Acid Bath</small></div>
+      <div class="bcard">Witch Mountain<small>opening for Acid Bath</small></div>
       <div class="bcard">Wolfmother</div>
       <div class="bcard">Ulcerate</div>
-      <div class="bcard">Coroner, Heathen<small>Dissonance Over the West tour</small></div>
+      <div class="bcard"><img class="blogo" src="logos/Coroner.jpg" alt="Coroner"><small>Dissonance Over the West tour</small></div>
+      <div class="bcard"><img class="blogo" src="logos/Heathen.jpg" alt="Heathen"><small>Dissonance Over the West tour</small></div>
       <div class="bcard">Dethklok</div>
       <div class="bcard">Ghost</div>
       <div class="bcard">Infected Mushroom</div>
     </div>
-    <div class="cardhint reveal">swipe the card &middot; 14 shows</div>
+    <div class="cardhint reveal">swipe the card &middot; 21 bands, 14 shows</div>
     <div class="hint">TAP</div>
   </section>
 
