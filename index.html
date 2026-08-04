@@ -186,8 +186,13 @@
     <div class="mesh"></div>
     <div class="eyebrow reveal">Before the numbers</div>
     <div class="reveal">
-      <div class="huge solo" data-count="589">0</div>
+      <div class="huge solo" id="liveDays">0</div>
       <div class="unit">days ago, a stranger said hi</div>
+    </div>
+    <div class="grid reveal" style="grid-template-columns:1fr 1fr 1fr;margin-top:22px;">
+      <div class="cell"><b id="liveYears">0</b><span>YEARS</span></div>
+      <div class="cell"><b id="liveWeeks">0</b><span>WEEKS</span></div>
+      <div class="cell"><b id="liveMinutes">0</b><span>MINUTES</span></div>
     </div>
     <div class="hint">TAP</div>
   </section>
@@ -650,6 +655,65 @@
       });
     });
   };
+</script>
+
+<script>
+(function(){
+  // Live counter, teaser slide: computed fresh from the actual first-message
+  // timestamp to Date.now() every second, so it's correct whenever this is
+  // viewed (not frozen at build time) and minutes visibly tick upward.
+  var START = new Date(2024, 11, 14, 10, 58, 0).getTime();
+  var elDays = document.getElementById('liveDays');
+  if(!elDays) return;
+  var elYears = document.getElementById('liveYears');
+  var elWeeks = document.getElementById('liveWeeks');
+  var elMinutes = document.getElementById('liveMinutes');
+
+  function compute(){
+    var diff = Date.now() - START;
+    var days = diff / 86400000;
+    return { days: days, weeks: days / 7, years: days / 365.25, minutes: diff / 60000 };
+  }
+  function renderStatic(){
+    var v = compute();
+    elDays.textContent = Math.floor(v.days).toLocaleString();
+    elWeeks.textContent = Math.floor(v.weeks).toLocaleString();
+    elYears.textContent = v.years.toFixed(1);
+    elMinutes.textContent = Math.floor(v.minutes).toLocaleString();
+  }
+
+  var animated = false, ticking = false;
+  function startTicking(){
+    if(ticking) return;
+    ticking = true;
+    setInterval(renderStatic, 1000);
+  }
+  function animateIn(){
+    if(animated) return;
+    animated = true;
+    var target = compute(), t0 = null, dur = 1600;
+    function frame(ts){
+      if(t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var ease = 1 - Math.pow(1 - p, 3);
+      elDays.textContent = Math.round(target.days * ease).toLocaleString();
+      elWeeks.textContent = Math.round(target.weeks * ease).toLocaleString();
+      elYears.textContent = (target.years * ease).toFixed(1);
+      elMinutes.textContent = Math.round(target.minutes * ease).toLocaleString();
+      if(p < 1) requestAnimationFrame(frame);
+      else { renderStatic(); startTicking(); }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  var slide = elDays.closest('.slide');
+  var io2 = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting && e.intersectionRatio > .55) animateIn();
+    });
+  }, {threshold:[.55]});
+  io2.observe(slide);
+})();
 </script>
 </body>
 </html>
